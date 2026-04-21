@@ -370,3 +370,35 @@ if __name__ == "__main__":
 
     print("\n🎉 Pipeline complete!")
     print(f"📁 Results saved in: {OUTPUT_DIR.resolve()}")
+
+
+
+
+
+
+
+
+
+
+
+
+    # In your notebook — no API server needed
+import subprocess
+from pathlib import Path
+
+INPUT_DIR  = Path("./pdfs")
+OUTPUT_DIR = Path("./output")
+OUTPUT_DIR.mkdir(exist_ok=True)
+
+for pdf in INPUT_DIR.glob("*.pdf"):
+    print(f"⏳ Processing: {pdf.name}")
+    result = subprocess.Popen(
+        ["mineru", "-p", str(pdf), "-o", str(OUTPUT_DIR), "-b", "pipeline"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True
+    )
+    for line in result.stdout:
+        print(line, end="", flush=True)
+    result.wait()
+    print(f"✅ Done: {pdf.name}" if result.returncode == 0 else f"❌ Failed: {pdf.name}")

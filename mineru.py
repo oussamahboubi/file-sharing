@@ -402,3 +402,51 @@ for pdf in INPUT_DIR.glob("*.pdf"):
         print(line, end="", flush=True)
     result.wait()
     print(f"✅ Done: {pdf.name}" if result.returncode == 0 else f"❌ Failed: {pdf.name}")
+
+
+
+    import requests
+from pathlib import Path
+
+SERVER_URL = "http://127.0.0.1:47677"
+INPUT_DIR  = Path("../input_files/SAMPLE")
+OUTPUT_DIR = Path("../output_files")
+OUTPUT_DIR.mkdir(exist_ok=True)
+
+def parse_pdf(pdf_path, method="pipeline"):
+    with open(pdf_path, "rb") as f:
+        response = requests.post(
+            f"{SERVER_URL}/file_parse",
+            files={"file": (pdf_path.name, f, "application/pdf")},
+            data={"parse_method": method}
+        )
+    return response.json() if response.status_code == 200 else None
+
+def save_markdown(result, output_path):
+    if not result:
+        return
+    # Extract markdown from response
+    content = result.get("markdown", result.get("content", str(result)))
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(content)
+    print(f"💾 Saved: {output_path.name}")
+
+# Process all PDFs
+pdf_files = list(INPUT_DIR.glob("*.pdf"))
+print(f"📂 Found {len(pdf_files)} PDF(s)")
+
+results = {}
+for pdf in pdf_files:
+    print(f"\n⏳ Processing: {pdf.name}")
+    result = parse_pdf(pdf, method="pipeline")
+
+    if result:
+        print(f"✅ Done: {pdf.name}")
+        # Save markdown output
+        out_file = OUTPUT_DIR / f"{pdf.stem}.md"
+        save_markdown(result, out_file)
+        results[pdf.name] = result
+    else:
+        print(f"❌ Failed: {pdf.name}")
+
+print(f"\n🎉 Done! Processed {len(results)}/{len(pdf_files)} files")

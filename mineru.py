@@ -521,3 +521,15 @@ for path, methods in spec.get("paths", {}).items():
             print("Parameters:")
             for p in details["parameters"]:
                 print(f"  - {p}")
+
+                import requests, json
+
+r = requests.get("http://127.0.0.1:8080/openapi.json")
+spec = r.json()
+
+# Find the file_parse endpoint specifically
+for path, methods in spec.get("paths", {}).items():
+    for method, details in methods.items():
+        print(f"\n{'='*50}")
+        print(f"{method.upper()} {path}")
+        print(json.dumps(details, indent=2))

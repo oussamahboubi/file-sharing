@@ -533,3 +533,8 @@ for path, methods in spec.get("paths", {}).items():
         print(f"\n{'='*50}")
         print(f"{method.upper()} {path}")
         print(json.dumps(details, indent=2))
+
+
+
+
+

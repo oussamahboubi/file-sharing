@@ -502,3 +502,22 @@ try:
     print(f"Response    : {response.text[:2000]}")  # full response
 except Exception as e:
     print(f"\n❌ Full Error: {e}")
+
+
+
+import requests, json
+
+r = requests.get("http://127.0.0.1:8080/openapi.json")
+spec = r.json()
+
+# Show all endpoints and their required fields
+for path, methods in spec.get("paths", {}).items():
+    for method, details in methods.items():
+        print(f"\n{'='*50}")
+        print(f"{method.upper()} {path}")
+        if "requestBody" in details:
+            print(json.dumps(details["requestBody"], indent=2))
+        if "parameters" in details:
+            print("Parameters:")
+            for p in details["parameters"]:
+                print(f"  - {p}")

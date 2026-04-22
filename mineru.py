@@ -450,3 +450,13 @@ for pdf in pdf_files:
         print(f"❌ Failed: {pdf.name}")
 
 print(f"\n🎉 Done! Processed {len(results)}/{len(pdf_files)} files")
+
+
+Empreinte
+
+# Auteur : Ton Nom
+# Date : 22/04/2026
+# Description : Module OCR - Traitement des images
+
+
+# sha256sum *.py > empreinte_code_$(date +%Y%m%d).txt

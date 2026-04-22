@@ -452,7 +452,7 @@ for pdf in pdf_files:
 print(f"\n🎉 Done! Processed {len(results)}/{len(pdf_files)} files")
 
 
-Empreinte
+#Empreinte
 
 # Auteur : Ton Nom
 # Date : 22/04/2026
@@ -460,3 +460,45 @@ Empreinte
 
 
 # sha256sum *.py > empreinte_code_$(date +%Y%m%d).txt
+
+
+#Test:
+
+
+import requests
+from pathlib import Path
+
+SERVER_URL = "http://127.0.0.1:8080"  # your port
+
+pdf_path = Path("../input_files/SAMPLE/1_13_2025_ENSMR.pdf")
+
+# ─────────────────────────────
+# Test 1 — Is server reachable?
+# ─────────────────────────────
+try:
+    r = requests.get(f"{SERVER_URL}/docs", timeout=5)
+    print(f"✅ Server reachable — status: {r.status_code}")
+except Exception as e:
+    print(f"❌ Server NOT reachable: {e}")
+
+# ─────────────────────────────
+# Test 2 — Does the PDF exist?
+# ─────────────────────────────
+print(f"PDF exists: {pdf_path.exists()}")
+print(f"PDF size  : {pdf_path.stat().st_size / 1024:.1f} KB" if pdf_path.exists() else "❌ File not found!")
+
+# ─────────────────────────────
+# Test 3 — Send PDF and show FULL response
+# ─────────────────────────────
+try:
+    with open(pdf_path, "rb") as f:
+        response = requests.post(
+            f"{SERVER_URL}/file_parse",
+            files={"file": (pdf_path.name, f, "application/pdf")},
+            data={"parse_method": "pipeline"},
+            timeout=300
+        )
+    print(f"\nStatus Code : {response.status_code}")
+    print(f"Response    : {response.text[:2000]}")  # full response
+except Exception as e:
+    print(f"\n❌ Full Error: {e}")
